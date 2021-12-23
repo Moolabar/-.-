@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Хранилище АбонентыModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <EntityType Name="Абоненты">
+    <Key>
+      <PropertyRef Name="Код_абонента" />
+    </Key>
+    <Property Name="Код_абонента" Type="int" Nullable="false" />
+    <Property Name="номер_абонента" Type="nchar" MaxLength="20" Nullable="false" />
+    <Property Name="ФИО" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Адрес" Type="nvarchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Звонки">
+    <Key>
+      <PropertyRef Name="код_звонка" />
+    </Key>
+    <Property Name="код_звонка" Type="int" Nullable="false" />
+    <Property Name="код_города" Type="int" Nullable="false" />
+    <Property Name="куда_осущ_вызов" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="дата_разговора" Type="date" Nullable="false" />
+    <Property Name="продолжительность" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="опталы" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="номер_разговора" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="код_телефона" Type="int" />
+  </EntityType>
+  <EntityType Name="Тарифы">
+    <Key>
+      <PropertyRef Name="код_тарифа" />
+    </Key>
+    <Property Name="код_тарифа" Type="int" Nullable="false" />
+    <Property Name="стоимость" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="информация" Type="nvarchar" MaxLength="50" />
+    <Property Name="код_звонка" Type="int" />
+  </EntityType>
+  <EntityType Name="Телефоны_абонентов">
+    <Key>
+      <PropertyRef Name="Код_телефона" />
+    </Key>
+    <Property Name="Код_телефона" Type="int" Nullable="false" />
+    <Property Name="номер_телефона" Type="nchar" MaxLength="20" Nullable="false" />
+    <Property Name="дата_установки" Type="date" Nullable="false" />
+    <Property Name="номер_договора" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="код_абонента" Type="int" />
+  </EntityType>
+  <Association Name="FK_Звонки_Телефоны_абонентов">
+    <End Role="Телефоны_абонентов" Type="Self.Телефоны_абонентов" Multiplicity="0..1" />
+    <End Role="Звонки" Type="Self.Звонки" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Телефоны_абонентов">
+        <PropertyRef Name="Код_телефона" />
+      </Principal>
+      <Dependent Role="Звонки">
+        <PropertyRef Name="код_телефона" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Тарифы_Звонки">
+    <End Role="Звонки" Type="Self.Звонки" Multiplicity="0..1" />
+    <End Role="Тарифы" Type="Self.Тарифы" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Звонки">
+        <PropertyRef Name="код_звонка" />
+      </Principal>
+      <Dependent Role="Тарифы">
+        <PropertyRef Name="код_звонка" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Телефоны_абонентов_Абоненты">
+    <End Role="Абоненты" Type="Self.Абоненты" Multiplicity="0..1" />
+    <End Role="Телефоны_абонентов" Type="Self.Телефоны_абонентов" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Абоненты">
+        <PropertyRef Name="Код_абонента" />
+      </Principal>
+      <Dependent Role="Телефоны_абонентов">
+        <PropertyRef Name="код_абонента" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
+  <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+    <Parameter Name="owner_id" Type="int" Mode="In" />
+    <Parameter Name="version" Type="int" Mode="In" />
+    <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+  </Function>
+  <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+    <Parameter Name="owner_id" Type="int" Mode="In" />
+    <Parameter Name="version" Type="int" Mode="In" />
+    <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+  </Function>
+  <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+    <Parameter Name="owner_id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+    <Parameter Name="owner_id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+    <Parameter Name="owner_id" Type="int" Mode="In" />
+  </Function>
+  <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+    <Parameter Name="owner_id" Type="int" Mode="In" />
+    <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
+  </Function>
+  <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+  <EntityContainer Name="Хранилище АбонентыModelContainer">
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Абоненты" EntityType="Self.Абоненты" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Звонки" EntityType="Self.Звонки" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Тарифы" EntityType="Self.Тарифы" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Телефоны_абонентов" EntityType="Self.Телефоны_абонентов" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Звонки_Телефоны_абонентов" Association="Self.FK_Звонки_Телефоны_абонентов">
+      <End Role="Телефоны_абонентов" EntitySet="Телефоны_абонентов" />
+      <End Role="Звонки" EntitySet="Звонки" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Тарифы_Звонки" Association="Self.FK_Тарифы_Звонки">
+      <End Role="Звонки" EntitySet="Звонки" />
+      <End Role="Тарифы" EntitySet="Тарифы" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Телефоны_абонентов_Абоненты" Association="Self.FK_Телефоны_абонентов_Абоненты">
+      <End Role="Абоненты" EntitySet="Абоненты" />
+      <End Role="Телефоны_абонентов" EntitySet="Телефоны_абонентов" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

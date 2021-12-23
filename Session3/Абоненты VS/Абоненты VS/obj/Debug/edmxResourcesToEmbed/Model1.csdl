@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="АбонентыModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="Абоненты">
+    <Key>
+      <PropertyRef Name="Код_абонента" />
+    </Key>
+    <Property Name="Код_абонента" Type="Int32" Nullable="false" />
+    <Property Name="номер_абонента" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="ФИО" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Адрес" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Телефоны_абонентов" Relationship="Self.FK_Телефоны_абонентов_Абоненты" FromRole="Абоненты" ToRole="Телефоны_абонентов" />
+  </EntityType>
+  <EntityType Name="Звонки">
+    <Key>
+      <PropertyRef Name="код_звонка" />
+    </Key>
+    <Property Name="код_звонка" Type="Int32" Nullable="false" />
+    <Property Name="код_города" Type="Int32" Nullable="false" />
+    <Property Name="куда_осущ_вызов" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="дата_разговора" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="продолжительность" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="опталы" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="номер_разговора" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="код_телефона" Type="Int32" />
+    <NavigationProperty Name="Телефоны_абонентов" Relationship="Self.FK_Звонки_Телефоны_абонентов" FromRole="Звонки" ToRole="Телефоны_абонентов" />
+    <NavigationProperty Name="Тарифы" Relationship="Self.FK_Тарифы_Звонки" FromRole="Звонки" ToRole="Тарифы" />
+  </EntityType>
+  <EntityType Name="Тарифы">
+    <Key>
+      <PropertyRef Name="код_тарифа" />
+    </Key>
+    <Property Name="код_тарифа" Type="Int32" Nullable="false" />
+    <Property Name="стоимость" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="информация" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="код_звонка" Type="Int32" />
+    <NavigationProperty Name="Звонки" Relationship="Self.FK_Тарифы_Звонки" FromRole="Тарифы" ToRole="Звонки" />
+  </EntityType>
+  <EntityType Name="Телефоны_абонентов">
+    <Key>
+      <PropertyRef Name="Код_телефона" />
+    </Key>
+    <Property Name="Код_телефона" Type="Int32" Nullable="false" />
+    <Property Name="номер_телефона" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="дата_установки" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="номер_договора" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="код_абонента" Type="Int32" />
+    <NavigationProperty Name="Абоненты" Relationship="Self.FK_Телефоны_абонентов_Абоненты" FromRole="Телефоны_абонентов" ToRole="Абоненты" />
+    <NavigationProperty Name="Звонки" Relationship="Self.FK_Звонки_Телефоны_абонентов" FromRole="Телефоны_абонентов" ToRole="Звонки" />
+  </EntityType>
+  <Association Name="FK_Телефоны_абонентов_Абоненты">
+    <End Role="Абоненты" Type="Self.Абоненты" Multiplicity="0..1" />
+    <End Role="Телефоны_абонентов" Type="Self.Телефоны_абонентов" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Абоненты">
+        <PropertyRef Name="Код_абонента" />
+      </Principal>
+      <Dependent Role="Телефоны_абонентов">
+        <PropertyRef Name="код_абонента" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Звонки_Телефоны_абонентов">
+    <End Role="Телефоны_абонентов" Type="Self.Телефоны_абонентов" Multiplicity="0..1" />
+    <End Role="Звонки" Type="Self.Звонки" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Телефоны_абонентов">
+        <PropertyRef Name="Код_телефона" />
+      </Principal>
+      <Dependent Role="Звонки">
+        <PropertyRef Name="код_телефона" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Тарифы_Звонки">
+    <End Role="Звонки" Type="Self.Звонки" Multiplicity="0..1" />
+    <End Role="Тарифы" Type="Self.Тарифы" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Звонки">
+        <PropertyRef Name="код_звонка" />
+      </Principal>
+      <Dependent Role="Тарифы">
+        <PropertyRef Name="код_звонка" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="АбонентыEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <EntitySet Name="Абоненты" EntityType="Self.Абоненты" />
+    <EntitySet Name="Звонки" EntityType="Self.Звонки" />
+    <EntitySet Name="Тарифы" EntityType="Self.Тарифы" />
+    <EntitySet Name="Телефоны_абонентов" EntityType="Self.Телефоны_абонентов" />
+    <AssociationSet Name="FK_Телефоны_абонентов_Абоненты" Association="Self.FK_Телефоны_абонентов_Абоненты">
+      <End Role="Абоненты" EntitySet="Абоненты" />
+      <End Role="Телефоны_абонентов" EntitySet="Телефоны_абонентов" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Звонки_Телефоны_абонентов" Association="Self.FK_Звонки_Телефоны_абонентов">
+      <End Role="Телефоны_абонентов" EntitySet="Телефоны_абонентов" />
+      <End Role="Звонки" EntitySet="Звонки" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Тарифы_Звонки" Association="Self.FK_Тарифы_Звонки">
+      <End Role="Звонки" EntitySet="Звонки" />
+      <End Role="Тарифы" EntitySet="Тарифы" />
+    </AssociationSet>
+    <FunctionImport Name="sp_alterdiagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="version" Mode="In" Type="Int32" />
+      <Parameter Name="definition" Mode="In" Type="Binary" />
+    </FunctionImport>
+    <FunctionImport Name="sp_creatediagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="version" Mode="In" Type="Int32" />
+      <Parameter Name="definition" Mode="In" Type="Binary" />
+    </FunctionImport>
+    <FunctionImport Name="sp_dropdiagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(АбонентыModel.sp_helpdiagramdefinition_Result)">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(АбонентыModel.sp_helpdiagrams_Result)">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="sp_renamediagram">
+      <Parameter Name="diagramname" Mode="In" Type="String" />
+      <Parameter Name="owner_id" Mode="In" Type="Int32" />
+      <Parameter Name="new_diagramname" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="sp_upgraddiagrams" />
+  </EntityContainer>
+  <ComplexType Name="sp_helpdiagramdefinition_Result">
+    <Property Type="Int32" Name="version" Nullable="true" />
+    <Property Type="Binary" Name="definition" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="sp_helpdiagrams_Result">
+    <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+    <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+    <Property Type="Int32" Name="ID" Nullable="false" />
+    <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+    <Property Type="Int32" Name="OwnerID" Nullable="false" />
+  </ComplexType>
+</Schema>
